@@ -1,5 +1,5 @@
 <template>
-    <details class="group relative" v-for="filter in filters">
+    <details class="group relative" v-for="filter in filters" v-bind:key="filter.value">
         <summary
             class="flex items-center gap-2 border-b border-gray-300 pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 [&::-webkit-details-marker]:hidden"
         >
@@ -84,7 +84,7 @@ export default {
 
     data() {
         return {
-            activeFilters: { ...this.value }, 
+            activeFilters: { ...this.value },
         };
     },
 
@@ -100,25 +100,23 @@ export default {
     methods: {
         toggleFilter(param, value) {
             const current = this.activeFilters[param] || [];
+
             const index = current.indexOf(value);
+            const updated = [...current];
 
             if (index === -1) {
-                current.push(value);
+                updated.push(value);
             } else {
-                current.splice(index, 1);
+                updated.splice(index, 1);
             }
 
-            this.$set(this.activeFilters, param, [...current]);
-            this.$emit("input", { ...this.activeFilters });
+            this.$emit("update-filters", {
+                param,
+                values: updated,
+            });
         },
-
-        resetFilter(param) {
-            this.$set(this.activeFilters, param, []);
-            this.$emit("input", { ...this.activeFilters });
-        },
-
-        selectedCount(param) {
-            return this.activeFilters[param]?.length || 0;
+        isActive(param, value) {
+            return (this.activeFilters[param] || []).includes(value);
         },
     },
 };

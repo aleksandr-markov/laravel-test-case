@@ -22,7 +22,6 @@ class XmlParserService
 
             $this->saveProduct($preparedProduct);
         }
-
     }
 
     private function saveProduct($preparedOffer)
@@ -55,7 +54,7 @@ class XmlParserService
         foreach ($params as $paramName => $paramValue) {
             $parameter = Parameter::firstOrCreate(
                 ['name' => $paramName],
-                ['slug' => Str::slug($paramName)]
+                ['slug' => Str::slug($paramName, '_')]
             );
 
             $value = ParameterValue::firstOrCreate([

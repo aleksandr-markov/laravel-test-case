@@ -2,33 +2,38 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Product;
-use App\Models\Parameter;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Parameter;
+use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
 class ProductController extends Controller
 {
-
     public function products(Request $request)
     {
+        $limit = $request->get('limit');
+        $query = Product::query()->with('pictures');
 
+        $keys = [];
+        $productIds = 0;
+        if ($filter = $request->get('filter')) {
+            foreach ($request->get('filter') as $parameter => $values) {
+                foreach ($values as $item) {
+                    $keys[] = "filter:$parameter:$item";
+                }
+            }
 
+            $productIds = Redis::sunion(...$keys);
+        }
 
-        $products = Product::query();
+        if ($productIds) {
+            $query->whereIn('id', $productIds);
+        }
 
+        $products = $query->paginate($limit);
 
-        // $request = [
-        //     'page' => 1,
-        //     'limit' => 1,
-        //     'sort_by' => 'price_asc',
-        //     'filter' => 'filter'
-        // ];
-
-        $products = Product::query()->paginate();
-
-        return response()->json($products, 200);
+        return response()->json($products);
     }
 
     public function filters(Request $request)
