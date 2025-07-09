@@ -1,12 +1,13 @@
 <template>
-    <ul class="pagination">
-        <li class="pagination-item">
+    <ul class="inline-flex -space-x-px text-sm">
+        <li
+            class="pagination-first-item ">
             <button type="button" @click="onClickFirstPage" :disabled="isInFirstPage">
                 First
             </button>
         </li>
 
-        <li class="pagination-item">
+        <li class="pagination-center-item ">
             <button type="button" @click="onClickPreviousPage" :disabled="isInFirstPage">
                 Previous
             </button>
@@ -14,7 +15,7 @@
 
         <!-- Visible Buttons Start -->
 
-        <li v-for="page in pages" :key="page.name" class="pagination-item" :class="{ active: isPageActive(page.name) }" >
+        <li v-for="page in pages" :key="page.name" class="pagination-center-item " :class="{ 'pagination-active-item': isPageActive(page.name) }">
             <button type="button" @click="onClickPage(page.name)" :disabled="page.isDisabled">
                 {{ page.name }}
             </button>
@@ -22,13 +23,13 @@
 
         <!-- Visible Buttons End -->
 
-        <li class="pagination-item">
+        <li class="pagination-center-item">
             <button type="button" @click="onClickNextPage" :disabled="isInLastPage">
                 Next
             </button>
         </li>
 
-        <li class="pagination-item">
+        <li class="pagination-last-item">
             <button type="button" @click="onClickLastPage" :disabled="isInLastPage">
                 Last
             </button>
@@ -112,29 +113,3 @@ export default {
 }
 
 </script>
-
-<style>
-.pagination {
-    padding: 2rem;
-    list-style-type: none;
-    margin: 0 auto;
-    width: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.pagination-item {
-    padding: 1rem;
-    background-color: gray;
-    color: white;
-    cursor: pointer;
-}
-
-.active {
-    background-color: #4AAE9B;
-    color: #ffffff;
-    font-weight: 700;
-    cursor: not-allowed;
-}
-</style>
