@@ -1,33 +1,24 @@
 <template>
     <div class="flex gap-6 p-6">
+
         <!-- Filters -->
         <aside class="w-1/4 p-4 rounded">
             <div>
-                <div v-for="activeFilter in activeFilters"
-                    class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
-                    <span></span>
-                </div>
-
                 <div class="flex gap-4 sm:gap-6 flex-col">
-                    <!-- <Filter :filters="filters" @update-filters="handleUpdateFilters" /> -->
-
                     <div v-for="filter in filters" :key="filter.slug" class="filter-group">
                         <h4>{{ filter.name }}</h4>
-                        <div v-for="option in filter.values" :key="option">
-                            <label>
-                                <input type="checkbox" :value="option.value" v-model="activeFilters[filter.slug]" />
-                                {{ option.value }}
-                            </label>
-                        </div>
+                        <multiselect v-model="activeFilters[filter.slug]" :options="filter.values.map(v => v.value)"
+                            :multiple="true" :close-on-select="false" :clear-on-select="false" :preserve-search="true"
+                            :preselect-first="false" placeholder="Chooose..." />
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- Products -->
-        <main>
+        <main class="w-3/4">
             <div v-if="products">
-                <div class="flex-1 grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-5 gap-4">
                     <Product v-for="product in products.data" :key="product.id" :product="product"> </Product>
                 </div>
             </div>
@@ -48,15 +39,16 @@
 
 <script>
 import axios from "axios";
-import Filter from "./Filter.vue";
 import Pagination from "./Pagination.vue";
 import Product from "./Product.vue"
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 export default {
     components: {
-        Filter,
         Pagination,
         Product,
+        Multiselect,
     },
     data() {
         return {
@@ -64,7 +56,7 @@ export default {
             filters: [],
             activeFilters: {},
             currentPage: 1,
-            limit: 100,
+            limit: 10,
             sort_by: "",
         };
     },
@@ -75,7 +67,7 @@ export default {
     },
 
 
-    
+
     watch: {
         activeFilters: {
             handler() {
@@ -125,7 +117,7 @@ export default {
                     this.activeFilters = Object.fromEntries(
                         this.filters.map(f => [f.slug, []])
                     );
-                    
+
                 })
                 .catch((error) => {
                     console.error("Error fetching filters:", error);

@@ -16,10 +16,8 @@ import { createApp } from 'vue';
 const app = createApp({});
 
 import Products from './components/Products.vue';
-import Filter from './components/Filter.vue';
 
 app.component('products', Products);
-app.component('filter', Filter);
 
 
 /**
